@@ -3,71 +3,64 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import HomeIcon from '@mui/icons-material/Home'
+import HomeIcon from "@mui/icons-material/Home";
 import Divider from "@mui/material/Divider";
-import HistoryIcon from '@mui/icons-material/HistoryEdu'
-import SchoolIcon from '@mui/icons-material/School'
-import BookIcon from '@mui/icons-material/LibraryBooks'
-import EyeIcon from '@mui/icons-material/Visibility'
-//#880035
+import EyeIcon from "@mui/icons-material/Visibility";
+import { useAuthState } from "react-firebase-hooks/auth";
+import SignIn from "../SignIn";
+import { auth, db } from "../../Firebase";
+import UserInfo from "../UserInfo";
+import { collection, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 interface Props {
-    handleQuizSelect: (targetUrl: string | null) => void;
+  setCategoryID: (categoryID: string | null) => void;
 }
 
-function SideBar({handleQuizSelect} : Props) {
-    return (
-        <>
-            <List>
+function SideBar({ setCategoryID }: Props) {
+  const [user] = useAuthState(auth);
+  const [categories, setCategories] = useState([]);
 
-                <ListItem disablePadding>
-                    <ListItemButton onClick={ () => handleQuizSelect(null) }>
-                        <ListItemIcon>
-                            <HomeIcon sx={{color: "#bc063a"}}/>  
-                        </ListItemIcon>
-                        <ListItemText primary="Strona Głowna"/>
-                    </ListItemButton>
-                </ListItem>
+  const fetchCategories = async () => {
+    await getDocs(collection(db, "categories")).then((querySnapchot) => {
+      const newData: any = querySnapchot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setCategories(newData);
+    });
+  };
 
-                <ListItem disablePadding>
-                    <ListItemButton sx={{pl: 4}} onClick={ () => handleQuizSelect('https://api-generator.retool.com/tNeRee/realioznawstwo') }>
-                        <ListItemIcon>
-                            <EyeIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Realioznawstwo"/>
-                    </ListItemButton>
-                </ListItem>
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-                <ListItem disablePadding>
-                    <ListItemButton sx={{pl: 4}} onClick={ () => handleQuizSelect('https://retoolapi.dev/UG94K6/historia') }>
-                        <ListItemIcon>
-                            <HistoryIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Historia"/>
-                    </ListItemButton>
-                </ListItem>
+  return (
+    <>
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => setCategoryID(null)}>
+            <ListItemIcon>
+              <HomeIcon sx={{ color: "#bc063a" }} />
+            </ListItemIcon>
+            <ListItemText primary="Strona Głowna" />
+          </ListItemButton>
+        </ListItem>
 
-                <ListItem disablePadding>
-                    <ListItemButton sx={{pl: 4}} onClick={ () => handleQuizSelect('https://retoolapi.dev/pHECYg/literatura') }>
-                        <ListItemIcon>
-                            <BookIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Literatura"/>
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton sx={{pl: 4}} onClick={ () => handleQuizSelect('https://quiz2-fe354-default-rtdb.europe-west1.firebasedatabase.app/kultura.json') }>
-                        <ListItemIcon>
-                            <SchoolIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Kultura"/>
-                    </ListItemButton>
-                </ListItem>
-
-            </List>
-            <Divider/>
-        </>
-    );
+        {categories.map((category) => (
+          <ListItem disablePadding>
+            <ListItemButton sx={{ pl: 4 }} onClick={() => setCategoryID(category["id"])}>
+              <ListItemIcon>
+                <EyeIcon />
+              </ListItemIcon>
+              <ListItemText primary={category["name"]} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        {user ? <UserInfo displayName={user.displayName} photoURL={user.photoURL} /> : <SignIn />}
+      </div>
+    </>
+  );
 }
 
 export default SideBar;

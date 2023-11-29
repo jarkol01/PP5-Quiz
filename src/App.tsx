@@ -1,12 +1,9 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import AppLayout from './components/AppLayout';
+import "./App.css";
+import "./components/SignIn/SignIn.css";
+import AppLayout from "./components/AppLayout";
 
 function App() {
-  return (
-    <AppLayout></AppLayout>
-  );
+  return <AppLayout></AppLayout>;
 }
 
 export default App;
