@@ -2,9 +2,11 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useCallback, useContext} from "react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../../Firebase";
+import {QuestionContext} from "../../context/questionContext";
+import {QuestionContextType} from "../../@types/question";
 
 interface IQuestion {
   question: string;
@@ -16,20 +18,12 @@ interface IQuestionBar {
 }
 
 function QuestionBar({ categoryID }: IQuestionBar) {
-  const [data, setData] = useState([]);
+  const { questions, setQuestions } = useContext(QuestionContext) as QuestionContextType
   const [currentQuestion, setCurrentQuestion] = useState<IQuestion | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [textFieldValue, setTextFieldValue] = useState("");
 
-  const fetchQuestions = async () => {
-    const categoryDoc = await getDoc(doc(db, "categories", categoryID));
-    await getDocs(collection(categoryDoc.ref, "questions")).then((querySnapchot) => {
-      const newData: any = querySnapchot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setData(newData);
-    });
-  };
-
-  const setRandomQuestion = () => setCurrentQuestion(data[Math.floor(Math.random() * data.length)]);
+  const setRandomQuestion = useCallback(() => setCurrentQuestion(questions[Math.floor(Math.random() * questions.length)]), [questions]);
 
   const handleShuffle = () => {
     setShowAnswer(false);
@@ -38,12 +32,20 @@ function QuestionBar({ categoryID }: IQuestionBar) {
   };
 
   useEffect(() => {
-    fetchQuestions();
-  }, [categoryID]);
+    const fetchQuestions = async () => {
+      const categoryDoc = await getDoc(doc(db, "categories", categoryID));
+      await getDocs(collection(categoryDoc.ref, "questions")).then((querySnapchot) => {
+        const newData: any = querySnapchot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setQuestions(newData);
+        console.log("Fetching data completed!")
+      });
+    }
+    void fetchQuestions();
+  }, [categoryID, setQuestions]);
 
   useEffect(() => {
     setRandomQuestion();
-  }, [data]);
+  }, [questions, setRandomQuestion]);
 
   return (
     <>
@@ -57,6 +59,7 @@ function QuestionBar({ categoryID }: IQuestionBar) {
             value={textFieldValue}
             onChange={(newValue) => setTextFieldValue(newValue.target.value)}
             fullWidth
+            sx={{ margin: "1%" }}
           />
           <div>
             <Button
