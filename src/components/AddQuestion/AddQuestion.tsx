@@ -50,14 +50,14 @@ function AddQuestion({categoryID}: AddQuestionInterface) {
   }
 
   return (
-    <FormControl sx={{margin: "5% auto", display: "inline-box"}}>
+    <>
       <TextField name="question" value={formData.question} type="text" variant="outlined" label="Twoje pytanie"
-                 onChange={handleChange} fullWidth sx={{margin: "1%"}}/>
+                 onChange={handleChange} fullWidth sx={{margin: "0.5% 1%"}}/>
       <TextField name="answer" value={formData.answer} type="text" variant="outlined" label="Twoja odpowiedź"
-                 onChange={handleChange} fullWidth sx={{margin: "1%"}}/>
+                 onChange={handleChange} fullWidth sx={{margin: "0.5% 1%"}}/>
       <Button type="submit" variant="contained" color="success" startIcon={<AddIcon/>} sx={{margin: "1rem"}}
               onClick={handleSubmit}>Dodaj pytanie</Button>
-    </FormControl>
+    </>
   );
 }
 
