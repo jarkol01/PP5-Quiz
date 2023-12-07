@@ -7,7 +7,7 @@ interface QuestionProviderProps {
   children: ReactNode;
 }
 
-const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) => {
+const QuestionProvider: React.FC<QuestionProviderProps> = ({children}) => {
   const [questions, setQuestions] = useState<IQuestion[]>([]);
 
   const addQuestion = (question: IQuestion) => {
@@ -15,7 +15,7 @@ const QuestionProvider: React.FC<QuestionProviderProps> = ({ children }) => {
   }
 
   return (
-    <QuestionContext.Provider value={{ questions, setQuestions, addQuestion }}>
+    <QuestionContext.Provider value={{questions, setQuestions, addQuestion}}>
       {children}
     </QuestionContext.Provider>
   );

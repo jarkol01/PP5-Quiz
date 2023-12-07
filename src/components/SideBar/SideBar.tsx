@@ -6,24 +6,24 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import Divider from "@mui/material/Divider";
 import EyeIcon from "@mui/icons-material/Visibility";
-import { useAuthState } from "react-firebase-hooks/auth";
+import {useAuthState} from "react-firebase-hooks/auth";
 import SignIn from "../SignIn";
-import { auth, db } from "../../Firebase";
+import {auth, db} from "../../Firebase";
 import UserInfo from "../UserInfo";
-import { collection, getDocs } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import {collection, getDocs} from "firebase/firestore";
+import {useEffect, useState} from "react";
 
 interface Props {
   setCategoryID: (categoryID: string | null) => void;
 }
 
-function SideBar({ setCategoryID }: Props) {
+function SideBar({setCategoryID}: Props) {
   const [user] = useAuthState(auth);
   const [categories, setCategories] = useState([]);
 
   const fetchCategories = async () => {
-    await getDocs(collection(db, "categories")).then((querySnapchot) => {
-      const newData: any = querySnapchot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    await getDocs(collection(db, "categories")).then((querySnapshot) => {
+      const newData: any = querySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setCategories(newData);
     });
   };
@@ -35,29 +35,29 @@ function SideBar({ setCategoryID }: Props) {
   return (
     <>
       <List>
-        <ListItem disablePadding>
+        <ListItem disablePadding key="home">
           <ListItemButton onClick={() => setCategoryID(null)}>
             <ListItemIcon>
-              <HomeIcon sx={{ color: "#bc063a" }} />
+              <HomeIcon sx={{color: "#bc063a"}}/>
             </ListItemIcon>
-            <ListItemText primary="Strona Głowna" />
+            <ListItemText primary="Strona Główna"/>
           </ListItemButton>
         </ListItem>
 
         {categories.map((category) => (
-          <ListItem disablePadding>
-            <ListItemButton sx={{ pl: 4 }} onClick={() => setCategoryID(category["id"])}>
+          <ListItem disablePadding key={category["id"]}>
+            <ListItemButton sx={{pl: 4}} onClick={() => setCategoryID(category["id"])}>
               <ListItemIcon>
-                <EyeIcon />
+                <EyeIcon/>
               </ListItemIcon>
-              <ListItemText primary={category["name"]} />
+              <ListItemText primary={category["name"]}/>
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        {user ? <UserInfo displayName={user.displayName} photoURL={user.photoURL} /> : <SignIn />}
+      <Divider/>
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+        {user ? <UserInfo displayName={user.displayName} photoURL={user.photoURL}/> : <SignIn/>}
       </div>
     </>
   );

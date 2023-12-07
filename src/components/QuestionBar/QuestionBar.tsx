@@ -3,8 +3,8 @@ import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import React, {useState, useEffect, useCallback, useContext} from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { db } from "../../Firebase";
+import {collection, doc, getDoc, getDocs} from "firebase/firestore";
+import {db} from "../../Firebase";
 import {QuestionContext} from "../../context/questionContext";
 import {QuestionContextType} from "../../@types/question";
 
@@ -17,8 +17,8 @@ interface IQuestionBar {
   categoryID: string;
 }
 
-function QuestionBar({ categoryID }: IQuestionBar) {
-  const { questions, setQuestions } = useContext(QuestionContext) as QuestionContextType
+function QuestionBar({categoryID}: IQuestionBar) {
+  const {questions, setQuestions} = useContext(QuestionContext) as QuestionContextType
   const [currentQuestion, setCurrentQuestion] = useState<IQuestion | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [textFieldValue, setTextFieldValue] = useState("");
@@ -35,7 +35,7 @@ function QuestionBar({ categoryID }: IQuestionBar) {
     const fetchQuestions = async () => {
       const categoryDoc = await getDoc(doc(db, "categories", categoryID));
       await getDocs(collection(categoryDoc.ref, "questions")).then((querySnapchot) => {
-        const newData: any = querySnapchot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        const newData: any = querySnapchot.docs.map((doc) => ({...doc.data(), id: doc.id}));
         setQuestions(newData);
         console.log("Fetching data completed!")
       });
@@ -59,14 +59,14 @@ function QuestionBar({ categoryID }: IQuestionBar) {
             value={textFieldValue}
             onChange={(newValue) => setTextFieldValue(newValue.target.value)}
             fullWidth
-            sx={{ margin: "1%" }}
+            sx={{margin: "1%"}}
           />
           <div>
             <Button
               variant="contained"
               color="primary"
-              sx={{ margin: "1rem" }}
-              startIcon={<SendIcon />}
+              sx={{margin: "1rem"}}
+              startIcon={<SendIcon/>}
               onClick={() => setShowAnswer(!showAnswer)}
             >
               Sprawdź odpowiedź
@@ -74,8 +74,8 @@ function QuestionBar({ categoryID }: IQuestionBar) {
             <Button
               variant="contained"
               color="primary"
-              sx={{ margin: "1rem" }}
-              startIcon={<ShuffleIcon />}
+              sx={{margin: "1rem"}}
+              startIcon={<ShuffleIcon/>}
               onClick={handleShuffle}
             >
               Wylosuj nowe pytanie
