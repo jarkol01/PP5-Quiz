@@ -2,10 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Info
-
-At the moment the app is using an API built on retool.com but i am working on a django backend
-
 ## Available Scripts
 
 In the project directory, you can run:
